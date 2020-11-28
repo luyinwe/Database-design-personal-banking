@@ -28,10 +28,11 @@ def create_user(N, operator_name_list):
 
             account_no = fake.credit_card_number(card_type = None)
             operator_name = random.choice(operator_name_list)
-            balance = random.rand()*1e6
+            balance = round(random.rand()*1e6,2)
             rating = random.choice(['initial','good','very good','excellent','VIP'])
             account.objects.create(account_number =account_no,
                                    username = user.objects.get(username = username),
+                                   state = 'successful',
                                    operator_name = operator.objects.get(username = operator_name),
                                    balance = balance,
                                    rating = rating
@@ -57,7 +58,7 @@ def create_operator(N=5):
 
 def create_loan(N, username_account, operator_username):
     fake = Faker()
-    for i in range(1000,1000+N):
+    for i in range(N):
         loan_no = i
         amount = random.rand()*1e5
         state = random.choice(['successful','pending','failed'])

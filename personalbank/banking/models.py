@@ -20,6 +20,7 @@ class user(models.Model):
 class account(models.Model):
     account_number = models.CharField(max_length = 15, primary_key = True, unique = True)
     username = models.ForeignKey(user, on_delete = models.CASCADE)
+    state = models.CharField(max_length = 1, choices=(('S','successful'),('P','pending'),('F','failed')),default='P')
     operator_name = models.ForeignKey(operator, on_delete = models.CASCADE)
     balance = models.FloatField(default = 0)
     rating = models.CharField(max_length = 1, choices=(('1','initial'),('2','good'),('3','very good'), ('4','excellent'), ('5','VIP')),default='1')

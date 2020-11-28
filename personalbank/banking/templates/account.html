@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>account</title>
+</head>
+<body>
+<table>
+    <thead>
+    <tr>
+        <th>account number</th>
+        <th>username</th>
+        <th>operator name</th>>
+        <th>balance</th>
+        <th>rating</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for acc in account %}
+    <tr>
+        <td>{{acc.account_number}}</td>
+        <td>{{acc.username}}</td>
+        <td>{{acc.operator_name}}</td>
+        <td>{{acc.balance}}</td>
+        <td>{{acc.rating}}</td>
+    </tr>>
+    {% endfor %}
+    </tbody>
+</table>
+
+<br>
+<a href="http://localhost:8000/transaction/">
+    <button>Make a transaction</button>
+</a>
+<a href="http://localhost:8000/loan/">
+    <button>Make a loan application</button>
+</a>
+<a href="http://localhost:8000/index/">
+    <button>Return to homepage</button>
+</a>
+</body>
+</html>
