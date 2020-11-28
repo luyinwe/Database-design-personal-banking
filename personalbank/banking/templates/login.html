@@ -7,13 +7,18 @@
 </head>
 
 <body>
+
 <h1>Login</h1>
 <form method = 'post' enctype="multipart/form-data">
+    {{ error_message }}
     {% csrf_token %}
     {{uf.as_p}}
     <input type="submit" value = "login" />
 </form>
+
+
 <br>
+
 <a href="http://localhost:8000/regist/">Without an account? Register</a>
 </body>
 </html>
