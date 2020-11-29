@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>wire transfer process</title>
+</head>
+<body>
+<h1>Wire Transfer application record to be processed</h1>
+<table>
+    <thead>
+    <tr>
+        <th>wire transaction number,   </th>
+        <th>date,   </th>
+        <th>currency_type,   </th>
+        <th>amount in USD,   </th>
+        <th>account_number,   </th>
+        <th>state,   </th>
+        <th>payee name,   </th>
+        <th>payee bank name,   </th>
+        <th>payee account number,   </th>
+        <th>payee swift code,   </th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for wt in wire_transact %}
+    <tr>
+        <td>{{wt.wt_transaction_no}}</td>
+        <td>{{wt.date}}</td>
+        <td>{{wt.currency_type}}</td>
+        <td>{{wt.amount}}</td>
+        <td>{{wt.account_number}}</td>
+        <td>{{wt.state}}</td>
+        <td>{{wt.payee_name}}</td>
+        <td>{{wt.payee_bank_name}}</td>
+        <td>{{wt.payee_account_no}}</td>
+        <td>{{wt.payee_swift_code}}</td>
+    </tr>>
+    {% endfor %}
+    </tbody>
+</table>
+
+<form method = 'post' enctype="multipart/form-data">
+    {% csrf_token %}
+    {{uf.as_p}}
+    <input type="submit" value = "Update" />
+    {{ error_message }}
+</form>
+
+<a href="http://localhost:8000/operatorAccount/">
+    <button>Return to homepage</button>
+</a>
+</body>
+</html>

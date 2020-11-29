@@ -18,6 +18,39 @@
 
 <br>
 
+<h2>Wire Transfer History</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Wire Transfer number,</th>
+        <th>date,</th>
+        <th>currency_type, </th>
+        <th>amount in USD, </th>
+        <th>state, </th>
+        <th>operator name, </th>
+        <th>payee's name, </th>
+        <th>payee's bank, </th>
+        <th>payee's account number, </th>
+        <th>payee's swift code, </th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for wt in wt_hist %}
+    <tr>
+        <td>{{wt.wt_transaction_no}}, </td>
+        <td>{{wt.date}}, </td>
+        <td>{{wt.currency_type}}, </td>
+        <td>{{wt.amount}}, </td>
+        <td>{{wt.state}}, </td>
+        <td>{{wt.operator_name}}, </td>
+        <td>{{wt.payee_name}}, </td>
+        <td>{{wt.payee_bank_name}}, </td>
+        <td>{{wt.payee_account_no}}, </td>
+        <td>{{wt.payee_swift_code}}</td>
+    </tr>>
+    {% endfor %}
+    </tbody>
+</table>
 <a href="http://localhost:8000/account/">Return to account panel</a>
 </body>
 </html>

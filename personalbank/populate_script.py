@@ -60,7 +60,7 @@ def create_loan(N, username_account, operator_username):
     fake = Faker()
     for i in range(N):
         loan_no = i
-        amount = random.rand()*1e5
+        amount = round(random.rand()*1e5,2)
         state = random.choice(['successful','pending','failed'])
         account_no = random.choice(list(username_account.values()))
         operator_name = random.choice(operator_username)
@@ -78,11 +78,11 @@ def create_wt(N, username_account):
         wt_no = i
         date = fake.date_time()
         currency_type = fake.currency_code()
-        amount = random.rand() * 1e5
+        amount = round(random.rand() * 1e5,2)
         account_no = random.choice(list(username_account.values()))
         state = random.choice(['successful', 'pending', 'failed'])
         operator_name = random.choice(operator_username)
-        payee_name = fake.name
+        payee_name = fake.name()
         payee_bank_name = fake.credit_card_provider(card_type = None)
         payee_account_no = fake.credit_card_number(card_type = None)
         payee_swift_code = fake.swift()

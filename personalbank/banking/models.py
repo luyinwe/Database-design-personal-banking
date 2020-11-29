@@ -20,15 +20,15 @@ class user(models.Model):
 class account(models.Model):
     account_number = models.CharField(max_length = 15, primary_key = True, unique = True)
     username = models.ForeignKey(user, on_delete = models.CASCADE)
-    state = models.CharField(max_length = 1, choices=(('S','successful'),('P','pending'),('F','failed')),default='P')
+    state = models.CharField(max_length = 100, choices=(('successful','successful'),('pending','pending'),('failed','failed')),default='pending')
     operator_name = models.ForeignKey(operator, on_delete = models.CASCADE)
     balance = models.FloatField(default = 0)
-    rating = models.CharField(max_length = 1, choices=(('1','initial'),('2','good'),('3','very good'), ('4','excellent'), ('5','VIP')),default='1')
+    rating = models.CharField(max_length = 100, choices=(('initial','initial'),('good','good'),('very good','very good'), ('excellent','excellent'), ('VIP','VIP')),default='initial')
 
 class loan(models.Model):
     loan_application_number = models.CharField(max_length = 9, primary_key = True)
     amount = models.FloatField(default = 0)
-    state = models.CharField(max_length = 1, choices=(('S','successful'),('P','pending'),('F','failed')),default='P')
+    state = models.CharField(max_length = 100, choices=(('successful','successful'),('pending','pending'),('failed','failed')),default = 'pending')
     account_number = models.ForeignKey(account, on_delete = models.CASCADE)
     operator_name = models.ForeignKey(operator, on_delete = models.CASCADE)
     due_date = models.DateTimeField()
@@ -39,7 +39,7 @@ class wire_transfer(models.Model):
     currency_type = models.CharField(max_length = 10)
     amount = models.FloatField(default = 0)
     account_number = models.ForeignKey(account, on_delete = models.CASCADE)
-    state = models.CharField(max_length = 1, choices=(('S','successful'),('P','pending'),('F','failed')),default='pending')
+    state = models.CharField(max_length = 100, choices=(('successful','successful'),('pending','pending'),('failed','failed')),default = 'pending')
     operator_name = models.ForeignKey(operator, on_delete = models.CASCADE)
     payee_name = models.CharField(max_length = 100)
     payee_bank_name = models.CharField(max_length = 100)

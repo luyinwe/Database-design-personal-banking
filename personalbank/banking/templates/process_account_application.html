@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>account</title>
+</head>
+<body>
+<h1>Account Application record to be processed</h1>
+<table>
+    <thead>
+    <tr>
+        <th>account number,   </th>
+        <th>username,   </th>
+        <th>state,   </th>
+        <th>balance,   </th>
+        <th>rating,   </th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for acc in account %}
+    <tr>
+        <td>{{acc.account_number}}</td>
+        <td>{{acc.username}}</td>
+        <td>{{acc.state}}</td>
+        <td>{{acc.balance}}</td>
+        <td>{{acc.rating}}</td>
+    </tr>>
+    {% endfor %}
+    </tbody>
+</table>
+
+<form method = 'post' enctype="multipart/form-data">
+    {% csrf_token %}
+    {{uf.as_p}}
+    <input type="submit" value = "Update" />
+    {{ error_message }}
+</form>
+<a href="http://localhost:8000/operatorAccount/">
+    <button>Return to homepage</button>
+</a>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Loan application List</title>
+</head>
+<body>
+<h1>Loan Application record to be processed</h1>
+<table>
+    <thead>
+    <tr>
+        <th>loan application number,   </th>
+        <th>amount,   </th>
+        <th>state,   </th>
+        <th>account number,   </th>
+        <th>due date,   </th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for acc in account %}
+    <tr>
+        <td>{{acc.loan_application_number}}</td>
+        <td>{{acc.amount}}</td>
+        <td>{{acc.state}}</td>
+        <td>{{acc.account_number}}</td>
+        <td>{{acc.due_date}}</td>
+    </tr>>
+    {% endfor %}
+    </tbody>
+</table>
+<form method = 'post' enctype="multipart/form-data">
+    {{ error_message }}
+    {% csrf_token %}
+    {{uf.as_p}}
+    <input type="submit" value = "Update" />
+</form>
+<a href="http://localhost:8000/operatorAccount/">
+    <button>Return to homepage</button>
+</a>
+
+</body>
+</html>

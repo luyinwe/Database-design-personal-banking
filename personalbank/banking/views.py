@@ -233,15 +233,19 @@ def transact(req):
 
 
 def wire_trans(req):
+    username = req.COOKIES.get('username', '')
+    acc = account.objects.filter(username = username)
+    wt_hist = wire_transfer.objects.filter(account_number__in = acc)
     if req.method == 'POST':
         uf = UserFormWireTransfer(req.POST)
         if uf.is_valid():
-            username = req.COOKIES.get('username', '')
+
             payer_account_no = account.objects.get(username=username)
             if payer_account_no.state != 'successful':
                 return render(req, 'loan.html', {
                     'error_message': 'Your account is not valid!',
                     'uf': uf,
+                    'wt_hist':wt_hist
                 })
             balance = payer_account_no.balance
             currency_type = uf.cleaned_data['currency_type']
@@ -252,6 +256,7 @@ def wire_trans(req):
                 return render(req, 'wire_transfer.html', {
                     'error_message': ' Operation Failed! Enter a smaller amount!',
                     'uf': uf,
+                    'wt_hist':wt_hist
                 })
             else:
                 wt_no = wire_transfer.objects.count()
@@ -272,11 +277,12 @@ def wire_trans(req):
                 return render(req, 'wire_transfer.html', {
                     'error_message': 'Operation Success! Needs to be handled by the operator. ' ,
                     'uf': uf,
+                    'wt_hist':wt_hist
                 })
     else:
         uf = UserFormWireTransfer()
-        return render(req, 'wire_transfer.html',{'uf':uf})
-    pass
+        return render(req, 'wire_transfer.html',{'uf':uf,'wt_hist':wt_hist})
+
 
 
 def index(req):
@@ -293,13 +299,135 @@ def index(req):
         href = "http://localhost:8000/account_regist/"
         return render(req,'index.html', {'username':username,'text':text,'href':href, 'account_no': 'Apply for one!' })
 
-#log out
+## operator form
+class OperatorAccountForm(forms.Form):
+    acc_no = forms.CharField(label = 'account number')
+    choicelist = (('successful','successful'),('failed','failed'))
+    state = forms.TypedChoiceField(choices = choicelist)
+    rating_list = (('initial','initial'),('good','good'),
+                   ('very good','very good'),('excellent','excellent'),
+                   ('VIP','VIP'))
+    rating = forms.TypedChoiceField(choices = rating_list)
+
+class OperatorLoanForm(forms.Form):
+    loan_no = forms.CharField(label = 'loan application number')
+    choicelist = (('successful','successful'),('failed','failed'))
+    state = forms.TypedChoiceField(choices = choicelist)
+    due_date = forms.DateTimeField(label = 'Due Date(YYYY-MM-DD HH:MM:SS)')
+
+class OperatorWTForm(forms.Form):
+    wt_no = forms.CharField(label = 'wire transfer application number')
+    choicelist = (('successful','successful'),('failed','failed'))
+    state = forms.TypedChoiceField(choices = choicelist)
+## operator function
+def operatorLogin(req):
+    if req.method == 'POST':
+        uf = UserFormLogin(req.POST)
+        if uf.is_valid():
+            #get username and password from cookie
+            username = uf.cleaned_data['username']
+            password = uf.cleaned_data['password']
+            #compare the data with the database
+            op = operator.objects.filter(username = username,password = password)
+            if op:
+                response = HttpResponseRedirect('/operatorAccount/')
+                #write username to cookie
+                response.set_cookie('username',username,3600)
+                return response
+            else:
+                #failed, go to login
+                return render(req, 'operatorLogin.html',{
+                    'error_message': ' Login Failed! Enter the username and password correctly',
+                    'uf':uf,
+                } )
+                # return HttpResponseRedirect('/login/')
+    else:
+        uf = UserFormLogin()
+        return render(req, 'operatorLogin.html',{'uf':uf})
+
+def operatorAccount(req):
+    username = req.COOKIES.get('username','')
+    return render(req,'operatorAccount.html',{'username':username})
+
+def operatorAccountProcess(req):
+    username = req.COOKIES.get('username','')
+    op = operator.objects.filter(username = username)
+    account_list = account.objects.filter(operator_name__in = op, state = 'pending')
+
+    if req.method == 'POST':
+        uf = OperatorAccountForm(req.POST)
+        if uf.is_valid():
+            acc_no = uf.cleaned_data['acc_no']
+            state = uf.cleaned_data['state']
+            rating = uf.cleaned_data['rating']
+            account.objects.filter(account_number = acc_no).update(state = state, rating = rating)
+            return render(req, 'process_account_application.html',{'account':account_list,'error_message':'successfully operated!','uf':uf})
+
+    else:
+        uf = OperatorAccountForm()
+        return render(req, 'process_account_application.html', {'account': account_list,'uf':uf})
+
+
+def operatorLoanProcess(req):
+    username = req.COOKIES.get('username', '')
+    op = operator.objects.filter(username=username)
+    loan_list = loan.objects.filter(operator_name__in=op, state='pending')
+
+    if req.method == 'POST':
+        uf = OperatorLoanForm(req.POST)
+        if uf.is_valid():
+            loan_no = uf.cleaned_data['loan_no']
+            state = uf.cleaned_data['state']
+            due_date = uf.cleaned_data['due_date']
+            if state == 'successful':
+                acc_no = loan.objects.get(loan_application_number = loan_no).account_number_id
+                balance = account.objects.get(account_number = acc_no).balance
+                loan_amount = loan.objects.get(loan_application_number = loan_no).amount
+                account.objects.filter(account_number = acc_no).update(balance = balance + loan_amount)
+            loan.objects.filter(loan_application_number = loan_no).update(state = state, due_date = due_date)
+            return render(req, 'process_loan_application.html',{'account':loan_list,'uf':uf, 'error_message':'successfully operated!'})
+
+    else:
+        uf = OperatorLoanForm()
+        return render(req, 'process_loan_application.html', {'account': loan_list,'uf':uf})
+
+# TODO
+# also needs to consider about how to decide the state(why the operator agree with the loan)
+
+
+def operatorWTProcess(req):
+    username = req.COOKIES.get('username', '')
+    op = operator.objects.filter(username=username)
+    wt_list = wire_transfer.objects.filter(operator_name__in=op, state='pending')
+    if req.method == 'POST':
+        uf = OperatorWTForm(req.POST)
+        if uf.is_valid():
+            wt_no = uf.cleaned_data['wt_no']
+            state = uf.cleaned_data['state']
+            if state == 'successful':
+                acc_no = wire_transfer.objects.get(wt_transaction_no = wt_no).account_number_id
+                balance = account.objects.get(account_number = acc_no).balance
+                wt_amount = wire_transfer.objects.get(wt_transaction_no = wt_no).amount
+                if wt_amount<balance:
+                    account.objects.filter(account_number = acc_no).update(balance = balance - wt_amount)
+                    wire_transfer.objects.filter(wt_transaction_no = wt_no).update(state = state)
+                    return render(req, 'process_wt_application.html',{'wire_transact': wt_list,'uf':uf, 'error_message':'successfully operated!'})
+                else:
+                    return render(req, 'process_wt_application.html',
+                                  {'wire_transact': wt_list, 'uf': uf, 'error_message': 'Can not choose successful, because the user doesn\'t have enough balance in his or her account!' })
+            else:
+                wire_transfer.objects.filter(wt_transaction_no=wt_no).update(state=state)
+
+    else:
+        uf = OperatorWTForm()
+        return render(req, 'process_wt_application.html', {'wire_transact': wt_list,'uf':uf})
+
+
 def logout(req):
-    response = HttpResponse('logout !!')
+    response = HttpResponseRedirect('/login/')
     #clear username kept in the form
     response.delete_cookie('username')
     return response
-
 # other function
 def get_exchange_rate(f, t):
     cc = ForeignExchange('MGFW88UHCJKCUEA8')

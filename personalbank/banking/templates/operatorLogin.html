@@ -3,24 +3,24 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Transaction</title>
+    <title>Login</title>
 </head>
 
 <body>
 
-<h1>Transaction</h1>
+<h1>Operator Login</h1>
 <form method = 'post' enctype="multipart/form-data">
     {{ error_message }}
     {% csrf_token %}
     {{uf.as_p}}
-    <input type="submit" value = "Confirm transaction" />
+    <input type="submit" value = "login" />
 </form>
-
-
 
 
 <br>
 
-<a href="http://localhost:8000/account/">Return to account panel</a>
+<a href="http://localhost:8000/regist/">Without an account? Register</a>
+<br>
+<a href="http://localhost:8000/login/">Log out</a>
 </body>
 </html>
