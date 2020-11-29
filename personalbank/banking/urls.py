@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^transaction/$', views.transact, name='transaction'),
     url(r'^account_regist/$', views.user_account_regist, name='account_regist'),
     url(r'^loan/$', views.loan_app, name='loan'),
+    url(r'^wire_transfer/$', views.wire_trans, name='wire_transfer'),
 ]

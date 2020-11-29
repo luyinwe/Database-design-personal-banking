@@ -16,9 +16,33 @@
     <input type="submit" value = "Apply for a loan" />
 </form>
 
+<h2> Loan history</h2>
+<table>
+    <thead>
+    <tr>
+        <th>loan application number,</th>
+        <th>amount,</th>
+        <th>state,</th>
+        <th>operator name,</th>
+        <th>due date</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for loan in loan_hist %}
+    <tr>
+        <td>{{loan.loan_application_number}},</td>
+        <td>{{loan.amount}},</td>
+        <td>{{loan.state}},</td>
+        <td>{{loan.operator_name}},</td>
+        <td>{{loan.due_date}}</td>
+    </tr>>
+    {% endfor %}
+    </tbody>
+</table>
 
 <br>
 
 <a href="http://localhost:8000/account/">Return to account panel</a>
+
 </body>
 </html>

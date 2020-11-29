@@ -3,10 +3,11 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.template import RequestContext
 from django import forms
 from .models import user as User
-from .models import account, transaction, operator,loan
+from .models import account, transaction, operator, loan, wire_transfer
 import time
 from faker import Faker
 import numpy.random as random
+from alpha_vantage.foreignexchange import ForeignExchange
 
 # form
 class UserForm(forms.Form):
@@ -29,11 +30,29 @@ class UserFormTransact(forms.Form):
                ('Entertainment', 'Entertainment'),
                ('Beverages', 'Beverages'),
                ('Beauty', 'Others'))
-    purpose = forms.TypedChoiceField(choices = choicelist)
+    purpose = forms.TypedChoiceField(choices = choicelist,label = 'purpose')
     payee_account_no = forms.CharField(max_length = 15)
 
 class UserFormAccount(forms.Form):
     balance = forms.FloatField(label = 'Initial balance')
+
+class UserLoanForm(forms.Form):
+    amount = forms.FloatField(label = "Loan Amount")
+
+class UserFormWireTransfer(forms.Form):
+    choicelist = (('AUD','AUD'),('BRL','BRL'),('BGN','BGN'),('CAD','CAD'),('CNY','CNY'),('HRK','HRK'),
+                  ('CYP','CYP'),('CZK','CZK'),('DKK','DKK'),('EEK','EEK'),('EUR','EUR'),('HKD','HKD'),
+                  ('HKD','HKD'),('HUF','HUF'),('ISK','ISK'),('IDR','IDR'),('JPY','JPY'),('KRW','KRW'),
+                  ('LVL','LVL'),('LTL','LTL'),('MYR','MYR'),('PLN','PLN'),('RON','RON'),('MTL','MTL'),
+                  ('NZD','NZD'),('NOK','NOK'),('PHP','PHP'),('RUB','RUB'),('SGD','SGD'),('SKK','SKK'),
+                  ('SEK','SEK'),('THB','THB'),('TRY','TRY'),('USD','USD'),('GBP','GBP'),('CHF','CHF'),
+                  ('ZAR','ZAR'),('SIT','SIT'))
+    currency_type = forms.TypedChoiceField(choices = choicelist,label = 'Currency_type')
+    amount = forms.FloatField(label = 'Amount')
+    payee_name = forms.CharField(label = 'Payee\'s name', max_length = 100)
+    payee_bank_name = forms.CharField(label = 'Payee\'s bank name', max_length = 100)
+    payee_account_no = forms.CharField(label = 'Payee\'s account number', max_length = 50)
+    payee_swift_code = forms.CharField(label = 'Payee\'s swift code', max_length = 100)
 
 # functions
 # register
@@ -111,8 +130,7 @@ def user_account_regist(req):
         uf = UserFormAccount()
         return render(req, 'account_application.html', {'uf': uf})
 
-class UserLoanForm(forms.Form):
-    amount = forms.FloatField(label = "Loan Amount")
+
 
 def loan_app(req):
     if req.method == 'POST':
@@ -136,16 +154,27 @@ def loan_app(req):
                                account_number = account_no,
                                operator_name = random.choice(operator_list),
                                due_date = due_date)
+            loan_hist = loan.objects.filter(account_number = account_no)
             return render(req, 'loan.html', {
                 'error_message': 'Successfully submit loan application!',
                 'uf': uf,
+                'loan_hist':loan_hist,
             })
     else:
         uf = UserLoanForm()
+        username = req.COOKIES.get('username','')
+        acc = account.objects.filter(username = username)
+        try:
+            loan_hist = loan.objects.filter(account_number__in = acc)
+        except Exception as e:
+            print(e)
+            loan_hist = ''
         return render(req, 'loan.html', {
                     'error_message':  '',
                     'uf': uf,
+                    'loan_hist': loan_hist,
                 })
+
 
 def transact(req):
     if req.method == 'POST':
@@ -203,6 +232,52 @@ def transact(req):
 
 
 
+def wire_trans(req):
+    if req.method == 'POST':
+        uf = UserFormWireTransfer(req.POST)
+        if uf.is_valid():
+            username = req.COOKIES.get('username', '')
+            payer_account_no = account.objects.get(username=username)
+            if payer_account_no.state != 'successful':
+                return render(req, 'loan.html', {
+                    'error_message': 'Your account is not valid!',
+                    'uf': uf,
+                })
+            balance = payer_account_no.balance
+            currency_type = uf.cleaned_data['currency_type']
+            amount = uf.cleaned_data['amount']
+            rate = get_exchange_rate('USD',currency_type)
+            amount_in_USD = amount/float(rate)
+            if amount_in_USD>balance:
+                return render(req, 'wire_transfer.html', {
+                    'error_message': ' Operation Failed! Enter a smaller amount!',
+                    'uf': uf,
+                })
+            else:
+                wt_no = wire_transfer.objects.count()
+                date = time.strftime('%Y-%m-%d %H:%m:%S', time.localtime(time.time()))
+                state = 'pending'
+                operator_list = operator.objects.all()
+                wire_transfer.objects.create(wt_transaction_no = wt_no,
+                                             date = date,
+                                             currency_type = currency_type,
+                                             amount = amount_in_USD,
+                                             account_number = payer_account_no,
+                                             state = state,
+                                             operator_name = random.choice(operator_list),
+                                             payee_name=uf.cleaned_data['payee_name'],
+                                             payee_bank_name = uf.cleaned_data['payee_bank_name'],
+                                             payee_account_no = uf.cleaned_data['payee_account_no'],
+                                             payee_swift_code = uf.cleaned_data['payee_swift_code'])
+                return render(req, 'wire_transfer.html', {
+                    'error_message': 'Operation Success! Needs to be handled by the operator. ' ,
+                    'uf': uf,
+                })
+    else:
+        uf = UserFormWireTransfer()
+        return render(req, 'wire_transfer.html',{'uf':uf})
+    pass
+
 
 def index(req):
     username = req.COOKIES.get('username','')
@@ -224,3 +299,10 @@ def logout(req):
     #clear username kept in the form
     response.delete_cookie('username')
     return response
+
+# other function
+def get_exchange_rate(f, t):
+    cc = ForeignExchange('MGFW88UHCJKCUEA8')
+    data, _ = cc.get_currency_exchange_rate(f, t)
+    rate = data['5. Exchange Rate']
+    return rate
