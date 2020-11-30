@@ -8,6 +8,9 @@ import time
 from faker import Faker
 import numpy.random as random
 from alpha_vantage.foreignexchange import ForeignExchange
+from django.utils import timezone
+import datetime
+
 
 # form
 class UserForm(forms.Form):
@@ -31,7 +34,7 @@ class UserFormTransact(forms.Form):
                ('Beverages', 'Beverages'),
                ('Beauty', 'Others'))
     purpose = forms.TypedChoiceField(choices = choicelist,label = 'purpose')
-    payee_account_no = forms.CharField(max_length = 15)
+    payee_account_no = forms.CharField(max_length = 100)
 
 class UserFormAccount(forms.Form):
     balance = forms.FloatField(label = 'Initial balance')
@@ -88,7 +91,7 @@ def login(req):
             if user:
                 response = HttpResponseRedirect('/index/')
                 #write username to cookie
-                response.set_cookie('username',username,3600)
+                response.set_cookie('username',username,36000)
                 return response
             else:
                 #failed, go to login
@@ -146,11 +149,13 @@ def loan_app(req):
             loan_app_no = loan.objects.count()
             amount = uf.cleaned_data['amount']
             state = 'pending'
+            date = time.strftime('%Y-%m-%d %H:%m:%S', time.localtime(time.time()))
             operator_list = operator.objects.all()
-            due_date = time.strftime('%Y-%m-%d %H:%m:%S', time.localtime(time.time()))
+            due_date = ''
             loan.objects.create(loan_application_number = loan_app_no,
                                amount = amount,
                                state = state,
+                               date = date,
                                account_number = account_no,
                                operator_name = random.choice(operator_list),
                                due_date = due_date)
@@ -177,31 +182,35 @@ def loan_app(req):
 
 
 def transact(req):
+    username = req.COOKIES.get('username', '')
+    acc = account.objects.filter(username=username)
+    trans_hist = transaction.objects.filter(payer_account_no__in=acc)
     if req.method == 'POST':
         uf = UserFormTransact(req.POST)
         if uf.is_valid():
-            username = req.COOKIES.get('username', '')
-            payer_account_no = account.objects.get(username=username)
-            if payer_account_no.state != 'successful':
+            acc = account.objects.get(username = username)
+            if acc.state != 'successful':
                 return render(req, 'transaction.html', {
                     'error_message': 'Your account is not valid!',
                     'uf': uf,
+                    'transact': trans_hist
                 })
-            balance = payer_account_no.balance
+            balance = acc.balance
             amount = uf.cleaned_data['amount']
             if amount>balance:
                 return render(req, 'transaction.html', {
                     'error_message': ' Transact Failed! Enter a smaller amount!',
                     'uf': uf,
+                    'transact':trans_hist
                 })
             else:
                 try:
-                    payee_account_no = uf.cleaned_data['payee_account_no']
+                    payee_no = uf.cleaned_data['payee_account_no']
                     # check whether the payee exist or not
-                    payee_existance = account.objects.get(account_number = payee_account_no)
+                    payee_existance = account.objects.get(account_number = payee_no)
                     # get payee's balance
                     payee_balance = payee_existance.balance
-                    account.objects.filter(account_number = payee_account_no).update(balance = payee_balance+amount)
+                    account.objects.filter(account_number = payee_no).update(balance = payee_balance+amount)
 
                     transaction_no = transaction.objects.count()
                     transaction_date = time.strftime('%Y-%m-%d %H:%m:%S', time.localtime(time.time()))
@@ -213,23 +222,72 @@ def transact(req):
                                                transaction_date = transaction_date,
                                                amount = amount,
                                                purpose = purpose,
-                                               payer_account_no = payer_account_no,
+                                               payer_account_no = acc,
                                                payee_account_no = payee_existance)
 
                     return render(req, 'transaction.html', {
                         'error_message': 'transaction success!',
                         'uf': uf,
+                        'transact': trans_hist
                     })
                 except Exception as e:
                     print(e)
                     return render(req, 'transaction.html', {
                         'error_message': 'Payee doesn\'t exist!',
                         'uf': uf,
+                        'transact':trans_hist
                     })
     else:
         uf = UserFormTransact()
-        return render(req, 'transaction.html', {'uf': uf})
+        return render(req, 'transaction.html', {'uf': uf,'transact':trans_hist})
 
+class searchTransForm(forms.Form):
+    transact_no = forms.CharField(label = 'transaction no', required = False, empty_value = None)
+    payee_no = forms.CharField(label = 'payee\' account no', required = False, empty_value = None)
+    purpose_choice = (('None','None'),('Alcoholic', 'Alcoholic'),
+               ('Snacks', 'Snacks'),
+               ('Health & Wellness', 'Health & Wellness'),
+               ('Household Items', 'Household Items'),
+               ('Entertainment', 'Entertainment'),
+               ('Beverages', 'Beverages'),
+               ('Beauty', 'Beauty'))
+    purpose = forms.TypedChoiceField(choices = purpose_choice)
+    from_date = forms.DateTimeField(label = 'Date from', widget = forms.DateInput(attrs = {'type':'date'}), required = False)
+    to_date = forms.DateTimeField(label = 'Date to', widget = forms.DateInput(attrs = {'type':'date'}), required = False)
+
+
+def search_transaction(req):
+    username = req.COOKIES.get('username','')
+    acc = account.objects.filter(username = username)
+    trans_hist = transaction.objects.filter(payer_account_no__in = acc)
+    if req.method == 'POST':
+        uf = searchTransForm(req.POST)
+        if uf.is_valid():
+            transaction_no = uf.cleaned_data['transact_no']
+            if transaction_no is not None:
+                trans_hist = trans_hist.filter(transaction_no = transaction_no)
+            payee_no = uf.cleaned_data['payee_no']
+            if payee_no is not None:
+                acc = account.objects.filter(account_number=payee_no)
+                if not acc:
+                    return render(req, 'transaction_history.html',
+                                  {'transact': trans_hist, 'uf': uf, 'error_message': 'The payee doesn\'t exist!'})
+
+                trans_hist = trans_hist.filter(payee_account_no__in = acc)
+            purpose = uf.cleaned_data['purpose']
+            if purpose != 'None':
+                trans_hist = trans_hist.filter(purpose = purpose)
+            from_date = uf.cleaned_data['from_date']
+            if from_date is not None:
+                trans_hist = trans_hist.filter(transaction_date__gte = from_date)
+            to_date = uf.cleaned_data['to_date']
+            if to_date is not None:
+                trans_hist = trans_hist.filter(transaction_date__lt = to_date)
+
+            return render(req, 'transaction_history.html', {'transact': trans_hist, 'uf': uf})
+    else:
+        uf = searchTransForm()
+        return render(req,'transaction_history.html',{'transact': trans_hist,'uf':uf})
 
 
 def wire_trans(req):
@@ -284,7 +342,6 @@ def wire_trans(req):
         return render(req, 'wire_transfer.html',{'uf':uf,'wt_hist':wt_hist})
 
 
-
 def index(req):
     username = req.COOKIES.get('username','')
     try:
@@ -319,6 +376,7 @@ class OperatorWTForm(forms.Form):
     wt_no = forms.CharField(label = 'wire transfer application number')
     choicelist = (('successful','successful'),('failed','failed'))
     state = forms.TypedChoiceField(choices = choicelist)
+
 ## operator function
 def operatorLogin(req):
     if req.method == 'POST':
@@ -367,6 +425,39 @@ def operatorAccountProcess(req):
         uf = OperatorAccountForm()
         return render(req, 'process_account_application.html', {'account': account_list,'uf':uf})
 
+def evaluate_credit(req):
+
+    username = req.COOKIES.get('username','')
+    op = operator.objects.filter(username = username)
+    account_list = account.objects.filter(operator_name__in = op, state = 'successful')
+    if req.method == 'POST':
+        for acc in account_list:
+            flow = 0
+            # startdate = timezone.now() - datetime.timedelta(days=180)
+            payer_flow = transaction.objects.filter(payer_account_no = acc)
+            payee_flow = transaction.objects.filter(payee_account_no = acc)
+            loan_flow = loan.objects.filter(account_number = acc, state = 'successful')
+            wt_flow = wire_transfer.objects.filter(account_number = acc, state = 'successful')
+            for payer in payer_flow:
+                flow += payer.amount
+            for payee in payee_flow:
+                flow += payee.amount
+            for loan_f in loan_flow:
+                flow += loan_f.amount
+            for wt in wt_flow:
+                flow += wt.amount
+            if flow< 1e4:
+                account.objects.filter(account_number = acc.account_number).update(rating = 'initial')
+            elif flow<1e5:
+                account.objects.filter(account_number=acc.account_number).update(rating='good')
+            elif flow<1e6:
+                account.objects.filter(account_number = acc.account_number).update(rating = 'very good')
+            elif flow<1e7:
+                account.objects.filter(account_number = acc.account_number).update(rating = 'excellent')
+            else:
+                account.objects.filter(account_number = acc.account_number).update(rating = 'VIP')
+    account_list = account.objects.filter(operator_name__in=op, state='successful')
+    return render(req, 'evaluate_credit.html',{'account':account_list})
 
 def operatorLoanProcess(req):
     username = req.COOKIES.get('username', '')
@@ -392,6 +483,7 @@ def operatorLoanProcess(req):
         return render(req, 'process_loan_application.html', {'account': loan_list,'uf':uf})
 
 # TODO
+# the rating should based on the transaction flow. when the transaction flow is smaller than 10^4, initial, 10^5, 10^6, 10^7, 10^8
 # also needs to consider about how to decide the state(why the operator agree with the loan)
 
 
@@ -429,6 +521,7 @@ def logout(req):
     response.delete_cookie('username')
     return response
 # other function
+
 def get_exchange_rate(f, t):
     cc = ForeignExchange('MGFW88UHCJKCUEA8')
     data, _ = cc.get_currency_exchange_rate(f, t)

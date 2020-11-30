@@ -62,12 +62,14 @@ def create_loan(N, username_account, operator_username):
         loan_no = i
         amount = round(random.rand()*1e5,2)
         state = random.choice(['successful','pending','failed'])
+        date = fake.date_time(tzinfo = None)
         account_no = random.choice(list(username_account.values()))
         operator_name = random.choice(operator_username)
         due_date = fake.date_time(tzinfo = None)
         loan.objects.create(loan_application_number = loan_no,
                             amount = amount,
                             state = state,
+                            date = date,
                             account_number = account.objects.get(account_number = account_no),
                             operator_name = operator.objects.get(username = operator_name),
                             due_date = due_date)
@@ -99,7 +101,7 @@ def create_transaction(N, username_account):
     for i in range(N):
         transaction_no = i
         transaction_date = fake.date_time()
-        amount = random.rand()*1e4
+        amount = round(random.rand()*1e4,2)
 
         purpose = random.choice(['Alcoholic','Snacks','Health & Wellness','Household Items','Entertainment','Beverages',
                                  'Beauty','Others'])
@@ -118,7 +120,7 @@ def create_transaction(N, username_account):
 
 operator_username = create_operator(20)
 username_account = create_user(N, operator_username)
-create_loan(int(N/4), username_account, operator_username)
-create_wt(int(N/10), username_account)
-create_transaction(int(N/2), username_account)
+create_loan(int(N), username_account, operator_username)
+create_wt(int(N), username_account)
+create_transaction(N, username_account)
 

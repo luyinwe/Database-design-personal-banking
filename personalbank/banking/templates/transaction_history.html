@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Transaction history</title>
+</head>
+<body>
+<h1>Transaction history</h1>
+<table>
+    <thead>
+    <tr>
+        <th>transaction_no,   </th>
+        <th>transaction_date,   </th>
+        <th>amount,   </th>
+        <th>purpose,   </th>
+        <th>payee_account_no,   </th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for tr in transact %}
+    <tr>
+        <td>{{tr.transaction_no}}</td>
+        <td>{{tr.transaction_date}}</td>
+        <td>{{tr.amount}}</td>
+        <td>{{tr.purpose}}</td>
+        <td>{{tr.payee_account_no}}</td>
+
+    </tr>>
+    {% endfor %}
+    </tbody>
+</table>
+
+<br>
+<form method = 'post' enctype="multipart/form-data">
+    {% csrf_token %}
+    {{uf.as_p}}
+    <input type="submit" value = "Search" />
+    {{ error_message }}
+</form>
+<br>
+<a href="http://localhost:8000/transaction/">
+    <button>Return to transaction page</button>
+</a>
+</body>
+</html>

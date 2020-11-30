@@ -18,7 +18,7 @@ class user(models.Model):
     ssn = models.CharField(max_length = 18)
 
 class account(models.Model):
-    account_number = models.CharField(max_length = 15, primary_key = True, unique = True)
+    account_number = models.CharField(max_length = 50, primary_key = True, unique = True)
     username = models.ForeignKey(user, on_delete = models.CASCADE)
     state = models.CharField(max_length = 100, choices=(('successful','successful'),('pending','pending'),('failed','failed')),default='pending')
     operator_name = models.ForeignKey(operator, on_delete = models.CASCADE)
@@ -29,9 +29,10 @@ class loan(models.Model):
     loan_application_number = models.CharField(max_length = 9, primary_key = True)
     amount = models.FloatField(default = 0)
     state = models.CharField(max_length = 100, choices=(('successful','successful'),('pending','pending'),('failed','failed')),default = 'pending')
+    date = models.DateTimeField()
     account_number = models.ForeignKey(account, on_delete = models.CASCADE)
     operator_name = models.ForeignKey(operator, on_delete = models.CASCADE)
-    due_date = models.DateTimeField()
+    due_date = models.DateTimeField(default = '')
 
 class wire_transfer(models.Model):
     wt_transaction_no = models.CharField(max_length = 9, primary_key = True)

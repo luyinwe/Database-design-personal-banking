@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>evaluate account</title>
+</head>
+<body>
+<h1>Re-evaluated account's credit</h1>
+
+<form action="" method="post">
+{% csrf_token %}
+<input type="hidden" name="shoucang" value=1>
+<button name="shoucang1">Press to re-evaluated the credit</button>
+</form>
+<br>
+<table>
+    <thead>
+    <tr>
+        <th>account number,   </th>
+        <th>username,   </th>
+        <th>state,   </th>
+        <th>balance,   </th>
+        <th>rating,   </th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for acc in account %}
+    <tr>
+        <td>{{acc.account_number}}</td>
+        <td>{{acc.username}}</td>
+        <td>{{acc.state}}</td>
+        <td>{{acc.balance}}</td>
+        <td>{{acc.rating}}</td>
+    </tr>>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+<br>
+<br>
+
+<a href="http://localhost:8000/operatorAccount/">
+    <button>Return to home page</button>
+
+</a>
+</body>
+</html>
