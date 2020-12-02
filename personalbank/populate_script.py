@@ -120,7 +120,7 @@ def create_transaction(N, username_account):
 
 operator_username = create_operator(20)
 username_account = create_user(N, operator_username)
-create_loan(int(N), username_account, operator_username)
-create_wt(int(N), username_account)
-create_transaction(N, username_account)
+create_loan(5*N, username_account, operator_username)
+create_wt(N, username_account)
+create_transaction(20*N, username_account)
 

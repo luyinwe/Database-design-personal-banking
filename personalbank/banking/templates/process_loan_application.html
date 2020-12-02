@@ -6,28 +6,52 @@
 </head>
 <body>
 <h1>Loan Application record to be processed</h1>
-<table>
-    <thead>
-    <tr>
-        <th>loan application number,   </th>
-        <th>amount,   </th>
-        <th>state,   </th>
-        <th>account number,   </th>
-        <th>due date,   </th>
-    </tr>
-    </thead>
+
+<table width="48%" border="0" align="left" cellpadding="0" cellspacing="0" >
+  <tr>
+    <td><table>
+
+        <th>loan application number,       </th>
+        <th>amount,       </th>
+        <th>state,          </th>
+        <th>account number,       </th>
+        <th>due date,      </th>
+
     <tbody>
-    {% for acc in account %}
+    {% for lo in loan_list %}
     <tr>
-        <td>{{acc.loan_application_number}}</td>
-        <td>{{acc.amount}}</td>
-        <td>{{acc.state}}</td>
-        <td>{{acc.account_number}}</td>
-        <td>{{acc.due_date}}</td>
+        <td>{{lo.loan_application_number}}</td>
+        <td>{{lo.amount}}</td>
+        <td>{{lo.state}}</td>
+        <td>
+            {{lo.account_number}}
+        </td>
+        <td>{{lo.due_date}}</td>
+
     </tr>>
     {% endfor %}
     </tbody>
+</table></td>
+  </tr>
 </table>
+<table width="48%" border="0" cellspacing="0" cellpadding="0" >
+  <tr>
+    <td><table>
+
+
+            <th>rate,   </th>
+
+        <tbody>
+        {% for ra in rate %}
+        <tr>
+            <td>{{ra}}</td>>
+        </tr>
+        {% endfor %}
+        </tbody>
+</table></td>
+  </tr>
+</table>
+
 <form method = 'post' enctype="multipart/form-data">
     {{ error_message }}
     {% csrf_token %}
@@ -40,3 +64,4 @@
 
 </body>
 </html>
+

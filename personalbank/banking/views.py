@@ -10,6 +10,7 @@ import numpy.random as random
 from alpha_vantage.foreignexchange import ForeignExchange
 from django.utils import timezone
 import datetime
+from django.db.models import Sum
 
 
 # form
@@ -151,14 +152,13 @@ def loan_app(req):
             state = 'pending'
             date = time.strftime('%Y-%m-%d %H:%m:%S', time.localtime(time.time()))
             operator_list = operator.objects.all()
-            due_date = ''
             loan.objects.create(loan_application_number = loan_app_no,
                                amount = amount,
                                state = state,
                                date = date,
                                account_number = account_no,
                                operator_name = random.choice(operator_list),
-                               due_date = due_date)
+                               )
             loan_hist = loan.objects.filter(account_number = account_no)
             return render(req, 'loan.html', {
                 'error_message': 'Successfully submit loan application!',
@@ -185,6 +185,7 @@ def transact(req):
     username = req.COOKIES.get('username', '')
     acc = account.objects.filter(username=username)
     trans_hist = transaction.objects.filter(payer_account_no__in=acc)
+
     if req.method == 'POST':
         uf = UserFormTransact(req.POST)
         if uf.is_valid():
@@ -260,6 +261,7 @@ def search_transaction(req):
     username = req.COOKIES.get('username','')
     acc = account.objects.filter(username = username)
     trans_hist = transaction.objects.filter(payer_account_no__in = acc)
+    transact_sum = transaction.objects.filter(payer_account_no__in=acc).aggregate(Sum('amount'))
     if req.method == 'POST':
         uf = searchTransForm(req.POST)
         if uf.is_valid():
@@ -283,11 +285,11 @@ def search_transaction(req):
             to_date = uf.cleaned_data['to_date']
             if to_date is not None:
                 trans_hist = trans_hist.filter(transaction_date__lt = to_date)
-
-            return render(req, 'transaction_history.html', {'transact': trans_hist, 'uf': uf})
+            transact_sum = trans_hist.aggregate(Sum('amount'))
+            return render(req, 'transaction_history.html', {'transact': trans_hist, 'uf': uf,'amount_sum':transact_sum['amount__sum']})
     else:
         uf = searchTransForm()
-        return render(req,'transaction_history.html',{'transact': trans_hist,'uf':uf})
+        return render(req,'transaction_history.html',{'transact': trans_hist,'amount_sum':transact_sum['amount__sum'],'uf':uf,})
 
 
 def wire_trans(req):
@@ -463,6 +465,9 @@ def operatorLoanProcess(req):
     username = req.COOKIES.get('username', '')
     op = operator.objects.filter(username=username)
     loan_list = loan.objects.filter(operator_name__in=op, state='pending')
+    rate = []
+    for lo in loan_list:
+        rate.append(account.objects.get(account_number = lo.account_number_id).rating)
 
     if req.method == 'POST':
         uf = OperatorLoanForm(req.POST)
@@ -476,11 +481,15 @@ def operatorLoanProcess(req):
                 loan_amount = loan.objects.get(loan_application_number = loan_no).amount
                 account.objects.filter(account_number = acc_no).update(balance = balance + loan_amount)
             loan.objects.filter(loan_application_number = loan_no).update(state = state, due_date = due_date)
-            return render(req, 'process_loan_application.html',{'account':loan_list,'uf':uf, 'error_message':'successfully operated!'})
+            loan_list = loan.objects.filter(operator_name__in = op, state = 'pending')
+            rate = []
+            for lo in loan_list:
+                rate.append(account.objects.get(account_number = lo.account_number_id).rating)
+            return render(req, 'process_loan_application.html',{'loan_list':loan_list,'uf':uf, 'error_message':'successfully operated!','rate':rate})
 
     else:
         uf = OperatorLoanForm()
-        return render(req, 'process_loan_application.html', {'account': loan_list,'uf':uf})
+        return render(req, 'process_loan_application.html', {'loan_list': loan_list,'uf':uf,'rate':rate})
 
 # TODO
 # the rating should based on the transaction flow. when the transaction flow is smaller than 10^4, initial, 10^5, 10^6, 10^7, 10^8
@@ -509,11 +518,12 @@ def operatorWTProcess(req):
                                   {'wire_transact': wt_list, 'uf': uf, 'error_message': 'Can not choose successful, because the user doesn\'t have enough balance in his or her account!' })
             else:
                 wire_transfer.objects.filter(wt_transaction_no=wt_no).update(state=state)
+                return render(req, 'process_wt_application.html',
+                              {'wire_transact': wt_list, 'uf': uf, 'error_message': 'successfully operated!'})
 
     else:
         uf = OperatorWTForm()
         return render(req, 'process_wt_application.html', {'wire_transact': wt_list,'uf':uf})
-
 
 def logout(req):
     response = HttpResponseRedirect('/login/')

@@ -32,7 +32,7 @@ class loan(models.Model):
     date = models.DateTimeField()
     account_number = models.ForeignKey(account, on_delete = models.CASCADE)
     operator_name = models.ForeignKey(operator, on_delete = models.CASCADE)
-    due_date = models.DateTimeField(default = '')
+    due_date = models.DateTimeField(blank = True, null = True)
 
 class wire_transfer(models.Model):
     wt_transaction_no = models.CharField(max_length = 9, primary_key = True)

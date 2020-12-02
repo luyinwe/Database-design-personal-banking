@@ -14,6 +14,7 @@
         <th>amount,   </th>
         <th>purpose,   </th>
         <th>payee_account_no,   </th>
+        <th>Total amount: {{amount_sum}}</th>
     </tr>
     </thead>
     <tbody>
@@ -28,7 +29,10 @@
     </tr>>
     {% endfor %}
     </tbody>
+
 </table>
+
+
 
 <br>
 <form method = 'post' enctype="multipart/form-data">

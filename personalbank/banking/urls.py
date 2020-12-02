@@ -19,5 +19,6 @@ urlpatterns = [
     url(r'^process_loan_application/$', views.operatorLoanProcess, name='process_loan_application'),
     url(r'^process_wire_transfer_application/$', views.operatorWTProcess, name='process_wire_transfer_application'),
     url(r'^search_transaction/$', views.search_transaction, name='search_transaction'),
-    url(r'^evaluated_credit/$', views.evaluate_credit, name='evaluated_credite')
+    url(r'^evaluated_credit/$', views.evaluate_credit, name='evaluated_credite'),
+    # url(r'^operator_account_check/$', views.operator_account_check, name='operator_account_check')
 ]
