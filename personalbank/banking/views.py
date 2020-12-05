@@ -435,11 +435,11 @@ def evaluate_credit(req):
     if req.method == 'POST':
         for acc in account_list:
             flow = 0
-            # startdate = timezone.now() - datetime.timedelta(days=180)
-            payer_flow = transaction.objects.filter(payer_account_no = acc)
-            payee_flow = transaction.objects.filter(payee_account_no = acc)
-            loan_flow = loan.objects.filter(account_number = acc, state = 'successful')
-            wt_flow = wire_transfer.objects.filter(account_number = acc, state = 'successful')
+            startdate = timezone.now() - datetime.timedelta(days=180)
+            payer_flow = transaction.objects.filter(payer_account_no = acc, transaction_date__gte = startdate)
+            payee_flow = transaction.objects.filter(payee_account_no = acc, transaction_date__gte = startdate)
+            loan_flow = loan.objects.filter(account_number = acc, state = 'successful', date__gte = startdate)
+            wt_flow = wire_transfer.objects.filter(account_number = acc, state = 'successful', date__gte = startdate)
             for payer in payer_flow:
                 flow += payer.amount
             for payee in payee_flow:

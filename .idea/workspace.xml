@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4f2af0c6-9591-4662-b248-88aa281b26e3" name="Default Changelist" comment="">
+    <list default="true" id="4f2af0c6-9591-4662-b248-88aa281b26e3" name="Default Changelist" comment="html added(to be revised)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/personalbank/banking/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/personalbank/banking/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/personalbank/banking/templates/operatorLogin.html" beforeDir="false" afterPath="$PROJECT_DIR$/personalbank/banking/templates/operatorLogin.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/personalbank/banking/templates/process_loan_application.html" beforeDir="false" afterPath="$PROJECT_DIR$/personalbank/banking/templates/process_loan_application.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/personalbank/banking/templates/regist.html" beforeDir="false" afterPath="$PROJECT_DIR$/personalbank/banking/templates/regist.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/personalbank/banking/templates/transaction_history.html" beforeDir="false" afterPath="$PROJECT_DIR$/personalbank/banking/templates/transaction_history.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/personalbank/banking/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/personalbank/banking/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/personalbank/banking/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/personalbank/banking/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/personalbank/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/personalbank/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/personalbank/populate_script.py" beforeDir="false" afterPath="$PROJECT_DIR$/personalbank/populate_script.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,11 +25,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/personalbank/banking/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="851">
+              <caret line="37" column="73" selection-start-line="37" selection-start-column="73" selection-end-line="37" selection-end-column="73" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/personalbank/banking/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="199">
-              <caret line="288" column="73" lean-forward="true" selection-start-line="288" selection-start-column="73" selection-end-line="288" selection-end-column="73" />
+            <state relative-caret-position="10258">
+              <caret line="452" column="26" selection-start-line="452" selection-start-column="26" selection-end-line="452" selection-end-column="26" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
@@ -44,9 +47,18 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/personalbank/populate_script.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2852">
+              <caret line="124" column="22" selection-start-line="124" selection-start-column="22" selection-end-line="124" selection-end-column="22" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/personalbank/banking/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="321">
+            <state relative-caret-position="483">
               <caret line="23" column="1" selection-start-line="23" selection-start-column="1" selection-end-line="23" selection-end-column="1" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
@@ -58,7 +70,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$USER_HOME$/AppData/Local/conda/conda/envs/python3/Lib/site-packages/django/core/handlers/base.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="124">
+            <state relative-caret-position="3772">
               <caret line="178" selection-start-line="178" selection-end-line="178" />
             </state>
           </provider>
@@ -67,10 +79,15 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/personalbank/banking/templates/transaction_history.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="161">
+            <state relative-caret-position="368">
               <caret line="16" column="26" selection-start-line="16" selection-start-column="26" selection-end-line="16" selection-end-column="26" />
             </state>
           </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/personalbank/banking/tests.py">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -147,17 +164,16 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-11" />
-    <option name="y" value="-11" />
-    <option name="width" value="1943" />
-    <option name="height" value="1103" />
+    <option name="x" value="-12" />
+    <option name="y" value="-12" />
+    <option name="width" value="1944" />
+    <option name="height" value="1104" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -181,6 +197,13 @@
               <item name="Database-design-personal-banking" type="462c0819:PsiDirectoryNode" />
               <item name="personalbank" type="462c0819:PsiDirectoryNode" />
               <item name="banking" type="462c0819:PsiDirectoryNode" />
+              <item name="migrations" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Database-design-personal-banking" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Database-design-personal-banking" type="462c0819:PsiDirectoryNode" />
+              <item name="personalbank" type="462c0819:PsiDirectoryNode" />
+              <item name="banking" type="462c0819:PsiDirectoryNode" />
               <item name="templates" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -193,6 +216,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -212,7 +236,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.user">
+  <component name="RunManager" selected="Python.operator">
     <configuration name="operator" type="PythonConfigurationType" factoryName="Python">
       <module name="Database-design-personal-banking" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -349,7 +373,14 @@
       <option name="project" value="LOCAL" />
       <updated>1606753047859</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="html added(to be revised)">
+      <created>1606925321084</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1606925321084</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -358,7 +389,7 @@
     <layout>
       <window_info id="Favorites" order="0" sideWeight="0.30394432" side_tool="true" weight="0.14676034" />
       <window_info id="DB Browser" order="1" />
-      <window_info content_ui="combo" id="Project" order="2" sideWeight="0.6960557" visible="true" weight="0.21311475" />
+      <window_info active="true" content_ui="combo" id="Project" order="2" sideWeight="0.6960557" visible="true" weight="0.2045277" />
       <window_info id="Structure" order="3" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Version Control" order="0" />
       <window_info anchor="bottom" id="Terminal" order="1" />
@@ -367,8 +398,8 @@
       <window_info anchor="bottom" id="DB Execution Console" order="4" />
       <window_info anchor="bottom" id="Message" order="5" />
       <window_info anchor="bottom" id="Find" order="6" sideWeight="0.49947917" weight="0.030487806" />
-      <window_info anchor="bottom" id="Run" order="7" sideWeight="0.49570647" weight="0.2624" />
-      <window_info active="true" anchor="bottom" id="Debug" order="8" sideWeight="0.7205308" visible="true" weight="0.1408" />
+      <window_info anchor="bottom" id="Run" order="7" sideWeight="0.49570647" weight="0.048" />
+      <window_info anchor="bottom" id="Debug" order="8" sideWeight="0.7205308" weight="0.1776" />
       <window_info anchor="bottom" id="Cvs" order="9" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="10" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="11" />
@@ -514,9 +545,6 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/personalbank/banking/apps.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/personalbank/banking/tests.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/personalbank/personalbank/__init__.py">
@@ -714,13 +742,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/personalbank/populate_script.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2714">
-          <caret line="124" column="22" selection-start-line="124" selection-start-column="22" selection-end-line="124" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/personalbank/db.sqlite3">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -749,13 +770,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="179">
           <caret line="177" selection-start-line="177" selection-end-line="177" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/personalbank/banking/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="568">
-          <caret line="34" column="61" selection-start-line="34" selection-start-column="61" selection-end-line="34" selection-end-column="61" />
         </state>
       </provider>
     </entry>
@@ -804,13 +818,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/conda/conda/envs/python3/Lib/site-packages/django/core/handlers/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="124">
-          <caret line="178" selection-start-line="178" selection-end-line="178" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/personalbank/banking/templates/process_loan_application.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-368">
@@ -818,16 +825,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/personalbank/banking/templates/transaction_history.html">
+    <entry file="file://$PROJECT_DIR$/personalbank/banking/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="16" column="26" selection-start-line="16" selection-start-column="26" selection-end-line="16" selection-end-column="26" />
+        <state relative-caret-position="851">
+          <caret line="37" column="73" selection-start-line="37" selection-start-column="73" selection-end-line="37" selection-end-column="73" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/personalbank/populate_script.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2852">
+          <caret line="124" column="22" selection-start-line="124" selection-start-column="22" selection-end-line="124" selection-end-column="22" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/personalbank/banking/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="321">
+        <state relative-caret-position="483">
           <caret line="23" column="1" selection-start-line="23" selection-start-column="1" selection-end-line="23" selection-end-column="1" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
@@ -835,10 +849,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/conda/conda/envs/python3/Lib/site-packages/django/core/handlers/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3772">
+          <caret line="178" selection-start-line="178" selection-end-line="178" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/personalbank/banking/templates/transaction_history.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="368">
+          <caret line="16" column="26" selection-start-line="16" selection-start-column="26" selection-end-line="16" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/personalbank/banking/tests.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/personalbank/banking/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="288" column="73" lean-forward="true" selection-start-line="288" selection-start-column="73" selection-end-line="288" selection-end-column="73" />
+        <state relative-caret-position="10258">
+          <caret line="452" column="26" selection-start-line="452" selection-start-column="26" selection-end-line="452" selection-end-column="26" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
           </folding>
